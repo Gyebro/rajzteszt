@@ -1,0 +1,16 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<polymer-element name="enabler-checkbox">
+  <template>
+    <paper-checkbox checked="{{checked}}" on-change="{{changeHandler}}"></paper-checkbox>
+  </template>
+  <script>
+    Polymer({
+	  checked: false,
+      changeHandler: function(event) {
+	    console.log(event);
+		document.getElementById("continueBtn").disabled=this.checked?false:true;
+      }
+    });
+  </script>
+</polymer-element>

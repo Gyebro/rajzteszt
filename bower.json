@@ -1,0 +1,20 @@
+{
+  "name": "drawingtest",
+  "version": "0.1",
+  "authors": [
+    "Gyebro <gyebroszkigergely@gmail.com>"
+  ],
+  "description": "html5 framework for dynamic drawing tests",
+  "license": "copyright Gitta Hadabas & Gergely Gyebroszki",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.5"
+  }
+}

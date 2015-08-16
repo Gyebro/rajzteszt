@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Rajzteszt</title>
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+	<link rel="import" href="bower_components/core-header-panel/core-header-panel.html">
+	<link rel="import" href="bower_components/font-roboto/roboto.html">
+	<link rel="import" href="bower_components/core-icons/core-icons.html">
+	<link rel="import" href="bower_components/paper-input/paper-input.html">
+	<link rel="import" href="bower_components/paper-button/paper-button.html">
+	<link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
+	<!-- Custom elements -->
+	<link rel="import" href="elements/paper-submit-button.html">
+	<link rel="import" href="elements/enabler-checkbox.html">
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+<body unresolved>
+  <core-header-panel>
+    <div class="core-header">Rajzteszt - Regisztráció
+		<!--<paper-fab class="sourceButton" icon="arrow-forward" title="arrow-forward"></paper-fab>-->
+	</div>
+    <div class="content">
+		<p>A Károli Gáspár Református Egyetem Képi kifejezéspszichológiai szaktanácsadó képzésének végzős hallgatójaként szakdolgozatomhoz egy kutatást végzek Prof. Dr. Vass Zoltán vezetésével.</p>
+		Az alábbi rajzteszt kitöltése nagyban segíti a munkámat, és körülbelül 20-30 percet vesz igénybe.</br>
+		A pontos eredmény érdekében kérlek, hogy a tesztet megszakítás nélkül töltsd ki és gondoskodj róla, hogy ne zavarjanak (pl. kapcsold ki a mobiltelefonodat a kitöltés idejére).</p>
+		<p>A teszt csak számítógépen tölthető ki, ajánlott böngésző: Chrome, Firefox.</p>
+		<p>A kutatással kapcsolatos bármilyen kérdéseddel, észrevételeddel az alábbi e-mail címen tudsz hozzám fordulni: gitta.hadabas@gmail.com</p>
+		Segítségedet nagyon köszönöm,</br>
+		Hadabás Gitta</p>
+		<form action="register.php" method="POST">
+			<paper-input-decorator label="Név (bizalmasan kezelem)" floatingLabel>
+				<input type="text" name="name" required></input>
+			</paper-input-decorator>
+			<paper-input-decorator label="Életkor (években)" floatingLabel>
+				<input type="number" name="age" required></input>
+			</paper-input-decorator>
+			<p>Nem: </p>
+			<input type="radio" name="gender" value="female" id="radio-female" checked/></input><label for="radio-female">Nő</label>
+			<input type="radio" name="gender" value="male"   id="radio-male"/></input><label for="radio-male">Férfi</label></br>
+			<p>Legmagasabb iskolai végzettség: </p>
+			<input type="radio" name="education" value="elementary" id="radio-ed1" checked/></input><label for="radio-ed1">8 általános</label></br>
+			<input type="radio" name="education" value="highschool" id="radio-ed2"/></input><label for="radio-ed2">Középiskola érettségivel</label></br>
+			<input type="radio" name="education" value="profession" id="radio-ed3"/></input><label for="radio-ed3">Középiskola szakképesítéssel</label></br>
+			<input type="radio" name="education" value="vocational" id="radio-ed4"/></input><label for="radio-ed4">Szakiskola és szakmunkásképző</label></br>
+			<input type="radio" name="education" value="college" id="radio-ed5"/></input><label for="radio-ed5">Főiskola</label></br>
+			<input type="radio" name="education" value="university" id="radio-ed6"/></input><label for="radio-ed6">Egyetem</label></br>
+			<p>Kézhasználat: </p>
+			<input type="radio" name="handedness" value="right"    id="radio-right" checked/></input><label for="radio-right">Jobbkezes</label></br>
+			<input type="radio" name="handedness" value="left"     id="radio-left"/></input><label for="radio-left">Balkezes</label></br>
+			<input type="radio" name="handedness" value="accright" id="radio-accright"/></input><label for="radio-accright">Átszoktatott balkezes</label></br>
+			<input type="radio" name="handedness" value="both"     id="radio-both"/></input><label for="radio-both">Mindkettőt egyformán használom</label></br>
+			<p>Járt-e vagy jelenleg jár-e pszichológiai szakrendelésre?</p>
+			<input type="radio" name="psycho" value="0" id="radio-psy0" checked/></input><label for="radio-psy0">Nem</label>
+			<input type="radio" name="psycho" value="1" id="radio-psy1"/></input><label for="radio-psy1">Igen</label></br>
+			<p>Beleegyező nyilatkozat: </p>
+			<p><enabler-checkbox id="continueChk"></enabler-checkbox> Kijelentem, hogy a vizsgálatban önként veszek részt. Tudomásul veszem, hogy személyi adataimat bizalmasan kezelik. Hozzájárulok ahhoz, hogy a vizsgálat során a rólam felvett, személyem azonosítására nem alkalmas adatok más kutatók számára is hozzáférhetők legyenek.</p>
+			<input type="hidden" name="browsername" id="browsername" />
+			<input type="hidden" name="browserversion" id="browserversion" />
+			</br>
+			<button id="continueBtn" type="submit" is="paper-submit-button" disabled>Folytatás</button>
+			</br></br>
+		</form>
+		<script>
+			function get_browser_info(){
+				var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+				if(/trident/i.test(M[1])){
+					tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
+					return {name:'IE',version:(tem[1]||'')};
+					}   
+				if(M[1]==='Chrome'){
+					tem=ua.match(/\bOPR\/(\d+)/)
+					if(tem!=null)   {return {name:'Opera', version:tem[1]};}
+					}   
+				M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+				if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+				return {
+				  name: M[0],
+				  version: M[1]
+				};
+			};
+			var browser = get_browser_info();
+			document.getElementById("browsername").value = browser.name;
+			document.getElementById("browserversion").value = browser.version;
+		</script>
+	</div>
+  </core-header-panel>
+</body>
+</html>
