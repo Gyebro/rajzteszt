@@ -50,11 +50,12 @@ else {
 				echo '<paper-input-decorator label="és hónapja" floatingLabel><input type="number" name="conmonths" id="conmonths" value=0></input></paper-input-decorator>';
 				echo '<input type="hidden" name="q'.$i.'" id="totalmonths" value="0"/>';
 			} else {
+				echo '<div style="display:none;"><input type="radio" name="q'.$i.'" value="0" checked/></div>';
 				echo '<label for="r'.$i.'1" style="float:left; padding-right:8px">(egyáltalán nem értek egyet)</label>';
 				echo '<input type="radio" name="q'.$i.'" value="1" id="r'.$i.'1"/></input><label for="r'.$i.'1">1</label>';
 				echo '<input type="radio" name="q'.$i.'" value="2" id="r'.$i.'2"/></input><label for="r'.$i.'2">2</label>';
 				echo '<input type="radio" name="q'.$i.'" value="3" id="r'.$i.'3"/></input><label for="r'.$i.'3">3</label>';
-				echo '<input type="radio" name="q'.$i.'" value="4" id="r'.$i.'4" checked/></input><label for="r'.$i.'4">4</label>';
+				echo '<input type="radio" name="q'.$i.'" value="4" id="r'.$i.'4"/></input><label for="r'.$i.'4">4</label>';
 				echo '<input type="radio" name="q'.$i.'" value="5" id="r'.$i.'5"/></input><label for="r'.$i.'5">5</label>';
 				echo '<input type="radio" name="q'.$i.'" value="6" id="r'.$i.'6"/></input><label for="r'.$i.'6">6</label>';
 				echo '<input type="radio" name="q'.$i.'" value="7" id="r'.$i.'7"/></input><label for="r'.$i.'7">7 (teljesen egyetértek)</label></br>';
@@ -88,7 +89,6 @@ function displayContextualOnly(pathid) {
 	conyears.disabled = dis;
 	conmonths.disabled = dis;
 	for (var i=12; i<=16; i++) {
-		console.log("changing "+i);
 		for(var j=1; j<=7; j++) {
 			var radio = document.querySelector("#r"+i+j);
 			radio.disabled = dis;
@@ -100,7 +100,6 @@ contypea.addEventListener("click", function(){displayContextualOnly();}, false);
 contypeb.addEventListener("click", function(){displayContextualOnly();}, false);
 contypec.addEventListener("click", function(){displayContextualOnly();}, false);
 contyped.addEventListener("click", function(){displayContextualOnly();}, false);
-
 </script>
 			<button type="submit" is="paper-submit-button">Folytatás</button>
 			</br></br>
