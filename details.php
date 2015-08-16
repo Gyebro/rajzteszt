@@ -57,31 +57,20 @@ else {
 			echo "</div>";
 		}
 	}
-	echo "<h2>Boldogság</h2>";
-	// Rajzok lekérése
-	$sql = "SELECT * FROM mainq WHERE USERID = ".$_GET["userid"];
-	$boldogsag = 0;
-	$blist = ["Az életem a legtöbb tekintetben közel van az ideálishoz.",
-			"Általában úgy tartom magamról, hogy nagyon boldog ember vagyok.",
-			"Az életkörülményeim kitűnőek.",
-			"Élvezem az életet, tekintet nélkül arra, hogy mi történik és mindenből a legjobbat hozom ki." ,
-			"Elégedett vagyok az életemmel.",
-			"Eddig minden fontosat megkaptam az életben, amit csak akartam.",
-			"Ha újra leélhetném az életem, szinte semmin sem változtatnék.",
-			"Általában nem vagyok túlságosan boldog. Bár nem vagyok depressziós, sohasem tűnök olyan boldognak, mint amilyen lehetnék.",
-			"Úgy gondolom, hogy a legtöbb társamhoz képest Én boldogabb vagyok."];
+	echo "<h2>Kérdőív</h2>";
+	// Teszteredmény
+	$sql = "SELECT * FROM tests WHERE USERID = ".$_GET["userid"];
+	$sqlQ = "SELECT * FROM questions";
+	$questions = mysqli_query($con,$sqlQ) or die(mysqli_error($con));
 	echo "<table>";
+	$i = 1;
 	if ($rowb = mysqli_fetch_array(mysqli_query($con,$sql))) {
-		for($k = 2; $k < 11; $k++) {
-			echo "<tr><td>".$blist[$k-2]."</td><td>".$rowb[$k]."</td></tr>"; 
-			if ($k == 9) {
-				$boldogsag += -$rowb[$k];
-			} else {
-				$boldogsag += $rowb[$k];
-			}
+		// $rowb holds the answers
+		while($rowq = mysqli_fetch_array($questions)) {
+			echo "<tr><td>".$rowq['TEXT']."</td><td>".$rowb["Q".$i]."</td></tr>"; 
+			$i++;
 		}
 	}
-	echo "<tr><td><b>Összesen</b></td><td>".$boldogsag."</td></tr>"; 
 	echo "</table>";
 }
 } else {
