@@ -101,7 +101,7 @@ contypeb.addEventListener("click", function(){displayContextualOnly();}, false);
 contypec.addEventListener("click", function(){displayContextualOnly();}, false);
 contyped.addEventListener("click", function(){displayContextualOnly();}, false);
 </script>
-			<button type="submit" is="paper-submit-button">Folytatás</button>
+			<button type="submit" is="paper-submit-button">Befejezés</button>
 			</br></br>
 		</form>
 	</div>
