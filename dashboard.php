@@ -47,7 +47,7 @@ else {
 		// Boldogságpont
 		$sql3 = "SELECT * FROM mainq WHERE USERID = ".$row[0];
 		$boldogsag = 0;
-		if ($row3 = mysqli_fetch_array(mysqli_query($con,$sql3))) {
+		/*if ($row3 = mysqli_fetch_array(mysqli_query($con,$sql3))) {
 			for($k = 2; $k < 11; $k++) {
 				if ($k == 9) {
 					$boldogsag += -$row3[$k];
@@ -55,10 +55,10 @@ else {
 					$boldogsag += $row3[$k];
 				}
 			}
-		}
+		}*/
 		echo "<td>".$boldogsag."</td>";
 		// Teljesség
-		if (($rajzok >= 24) && ($boldogsag > 0)) {
+		if (($rajzok >= 24)/* && ($boldogsag > 0)*/) {
 			$boldogsagsum+=$boldogsag;
 			$fullcount++; //echo "<td>Igen</td>";
 		} else { 
