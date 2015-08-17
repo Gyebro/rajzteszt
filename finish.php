@@ -59,7 +59,10 @@ else {
 	}
 }
 ?>
-		<p>Köszönöm szépen a közremûködésedet!</br> A kutatással kapcsolatos bármilyen kérdéseddel, észrevételeddel az alábbi e-mail címen tudsz hozzám fordulni: gitta.hadabas@gmail.com</p>
+		<p>Köszönöm szépen a közremûködésedet!</br>A rajztesztek kiértékelésével kapcsolatban további információt Dr. Vass Zoltán honlapján, az alábbi oldalakon találsz:</br>
+		<a href="http://www.rajzelemzes.hu/rajzelemzes/A_Hatvan_Masodperces_Rajzteszt.html" target="_blank">A Hatvan Másodperces Rajzteszt</a></br>
+		<a href="http://www.rajzelemzes.hu/rajzelemzes/Spontan_firkak_es_firkatesztek_vizsgalati_modszerei.html" target="_blank">Spontán firkák és firkatesztek vizsgálati módszerei</a>
+		</p>
 	</div>
   </core-header-panel>
 </body>
