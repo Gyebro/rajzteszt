@@ -27,8 +27,8 @@ if (!$con) {
 else {
 	// Form
 	$drwnames = ["düh","magány","szomorúság","boldogság érzése","hangulatom az utóbbi időben","magadat majd párodat","magadat és párodat","legjobb barátodat","számodra ideális partnert","akivel konfliktusban állsz","legfontosabb problémádra","ugyanez a probléma egy év múlva","párodat öt év múlva","gyenge énedet és erős énedet","boldogságot","pénzt",  "szexualitást","munkádat",  "egészségedet","szomorúságot","szabadságot","hálát",  "spiritualitást","hangulatodat az utóbbi időben"];
-	$indexnames = ["CDIST","PDIST","RRAT","INTS"];
-	$indexlongnames = ["CDIST: középpontok távolsága","PDIST: körívek távolsága","RRAT: 'Én'/'Más' kör sugarainak aránya", "INTS: Metszési viszony"];
+	$indexnames = ["CDIST","PDIST","RRAT","INTS","CDISTREL"];
+	$indexlongnames = ["CDIST: középpontok távolsága","PDIST: körívek távolsága","RRAT: 'Én'/'Más' kör sugarainak aránya", "INTS: Metszési viszony", "CDIST: kp-ok relatív távolsága"];
 	echo '<form action="examine.php" method="GET"><p>Rajz és index választás: </p><select name="stage">';
 	for ($i=5; $i<sizeof($drwnames); $i++) {
 		echo '<option id="st'.$i.'" value="'.($i+1).'">'.($i+1).": ".$drwnames[$i].'</option>';
@@ -58,6 +58,15 @@ else {
 			$did = $row["DRAWINGID"];
 			echo "pts.push({x:".$h.",y:".$idx.",name: \"<img width='250px' src='rajz/".$did.".svg'></br> rajz: ".$did."\"});\n";
 		}
+		echo "var regression = []; var xa = 0; var ya = 0; var sx = 0; var sy = 0; var sxy = 0; var xmax=-1000;";
+		echo "for (var i=0; i<pts.length; i++) { xa+=pts[i].x; ya+=pts[i].y; if(pts[i].x>xmax) {xmax = pts[i].x;} }";
+		echo "xa /= pts.length; ya /= pts.length;";
+		echo "for (var i=0; i<pts.length; i++) { sx+=Math.pow(pts[i].x-xa,2); ".
+		"sy += Math.pow(pts[i].y-ya,2); sxy += (pts[i].x-xa)*(pts[i].y-ya); }";
+		echo "var b = sxy/sx; var a=ya-b*xa;";
+		echo "var rc = sxy/Math.sqrt(sx*sy);";
+		echo "regression.push({x:0,y:a,name:'R = '+rc});";
+		echo "regression.push({x:xmax,y:a+xmax*b,name:'R = '+rc});";
 		echo "</script>";
 	} else {
 		die("<p>Válassz rajzot és indexet, majd kattints az OK gombra!</p>");

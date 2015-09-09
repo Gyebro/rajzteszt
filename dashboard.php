@@ -17,7 +17,7 @@
 <body unresolved>
   <core-header-panel>
     <div class="core-header">Dashboard</div>
-    <div class="content">
+    <div class="content" style="width:84% !important;">
 	<p><a href="generateall.php" target="_blank">Rajzok generálása</a></p>
 <?php 
 include 'database.inc.php';
@@ -30,19 +30,31 @@ else {
 	mysqli_query($con,$sql) or die(mysqli_error($con));
 	$sql = "SELECT * FROM users";
 	$result = mysqli_query($con,$sql) or die(mysqli_error($con));
-	echo "<table>";
+	echo "<table style='width:100%'>";
 	$testcount = 0;
 	$fullcount = 0;
+	$boredcount = 0;
+	$failedcount = 0;
 	$drawingcount = 0;
 	$boldogsagsum = 0;
-	echo "<tr><th>Idő</th><th>ID</th><th>Név</th><th>Életkor</th><th>Psycho</th><th>Rajzok</th><th>Boldogság</th><th>Részletek</th></tr>";
+	echo "<tr><th>Idő</th><th>ID</th><th>Név</th><th>Életkor</th><th>Psycho</th><th>Rajzok</th><th>Boldogság</th><th>Böngésző</th><th>Részletek</th></tr>";
 	while ($row = mysqli_fetch_array($result)) {
 		$testcount++;
-		echo "<tr><td>".$row[7]."</td><td>".$row[0]."</td><td>".$row[1]."</td><td>".$row[2]."</td><td>".$row[6]."</td>";
 		// Rajzok száma
 		$sql2 = "SELECT * FROM drawings WHERE USERID = ".$row[0];
 		$rajzok = mysqli_num_rows(mysqli_query($con,$sql2));
 		$drawingcount += $rajzok;
+		if ($rajzok >= 24) {
+			echo '<tr style="background: rgb(200,255,200);">';
+			$fullcount++;
+		} else if ($rajzok > 0) {
+			echo '<tr style="background: rgb(255,255,200);">';
+			$boredcount++;
+		} else {
+			echo '<tr style="background: rgb(255,200,200);">';
+			$failedcount++;
+		}
+		echo "<td>".$row[7]."</td><td>".$row[0]."</td><td>".$row[1]."</td><td>".$row[2]."</td><td>".$row[6]."</td>";
 		echo "<td>".$rajzok."</td>";
 		// Boldogságpont
 		$sql3 = "SELECT * FROM mainq WHERE USERID = ".$row[0];
@@ -57,21 +69,17 @@ else {
 			}
 		}*/
 		echo "<td>".$boldogsag."</td>";
-		// Teljesség
-		if (($rajzok >= 24)/* && ($boldogsag > 0)*/) {
-			$boldogsagsum+=$boldogsag;
-			$fullcount++; //echo "<td>Igen</td>";
-		} else { 
-			//echo "<td>Nem</td>";
-		}
+		// Böngésző
+		echo "<td>".$row['BROWSERNAME']." ".$row['BROWSERVERSION']."</td>";
 		echo "<td><a target='_blank' href='details.php?userid=".$row[0]."'>Részletek</a></td>";
 		echo "</tr>";
 	}
 	echo "</table>";
 	echo "<table>";
 	echo "<tr><td>Tesztek száma</td><td>".$testcount."</td></tr>";
-	echo "<tr><td>Teljes tesztek száma</td><td>".$fullcount."</td></tr>";
-	echo "<tr><td>Átlagos boldogság</td><td>".($boldogsagsum/$fullcount)."</td></tr>";
+	echo "<tr style='background: rgb(200,255,200);'><td>Teljes tesztek száma</td><td>".$fullcount."</td></tr>";
+	echo "<tr style='background: rgb(255,255,200);'><td>Abbahagyott tesztek száma</td><td>".$boredcount."</td></tr>";
+	echo "<tr style='background: rgb(255,200,200);'><td>Rajz nélküli tesztek száma</td><td>".$failedcount."</td></tr>";
 	echo "<tr><td>Rajzok száma</td><td>".$drawingcount."</td></tr>";
 	echo "</table>";
 }

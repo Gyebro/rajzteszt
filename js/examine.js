@@ -9,6 +9,9 @@
 	data: [{
 		type: "scatter",
 		dataPoints: pts
+	},{
+		type: "line",
+		dataPoints: regression
 	}]
 });
 chart.render();

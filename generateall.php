@@ -15,6 +15,12 @@ if (!$con) { die("Sikertelen csatlakozás: " . mysqli_error($con)); }
 else {
 	$sql = "SET NAMES 'utf8'";
 	mysqli_query($con,$sql) or die(mysqli_error($con));
+	$sql = "SELECT * FROM questions";
+	$result = mysqli_query($con,$sql) or die(mysqli_error($con));
+	while($row = mysqli_fetch_array($result)) {
+		$signs["Q".$row['ID']]=intval($row['SIGN']);
+	}
+	//var_dump($signs);
 	$sql = "SELECT * FROM drawings";
 	$result = mysqli_query($con,$sql) or die(mysqli_error($con));
 	$generated = 0;
@@ -30,13 +36,14 @@ else {
 		if ($stage > 5) {
 			// This is a circle-test
 			// Calculate happiness of the user
-			$sqlh = "SELECT * FROM mainq WHERE USERID = ".$userID;
+			$sqlh = "SELECT * FROM tests WHERE USERID = ".$userID;
 			$happy = 0;
 			if ($rowh = mysqli_fetch_array(mysqli_query($con,$sqlh))) {
-				for($k = 2; $k < 11; $k++) {
-					if ($k == 9) { $happy += -$rowh[$k]; } 
-					else { $happy += $rowh[$k]; }
+				for($k = 1; $k <= 9; $k++) {
+					$label = "Q".$k;
+					$happy += $rowh[$label]*$signs[$label];
 				}
+				//echo "user: ".$userID." happiness: ".$happy."</br>";
 			}
 			// Fit circles, first fit will be the self-circle
 			$fit = multiFitCircle($d,$self);
@@ -52,6 +59,7 @@ else {
 				$rsum = $r0+$r1;
 				$cdist = sqrt($dx*$dx+$dy*$dy);
 				$pdist = $cdist-$rsum;
+				$cdistrel = $cdist/$rsum;
 				if ($r1 == 0) { $r1 = 0.1; }
 				$rrat = $r0/$r1;
 				$ints = 0;
@@ -64,11 +72,11 @@ else {
 				elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr+$tol)) { $ints = 2; }
 				elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr-$tol)) { $ints = 3; }
 				elseif (($pdist < -$tol) && ($cdist < $maxr-$minr-$tol)) { $ints = 4; }
-				$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, HAPPY, X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS) ";
+				$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, HAPPY, X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS, CDISTREL) ";
 				$sql2.= "VALUES ('".$drawingID."','".$userID."','".$stage."','".$happy."','".
 				$fit[0]["cx"]."','".$fit[0]["cy"]."','".$r0."','".$fit[0]["err"]."','".
 				$fit[1]["cx"]."','".$fit[1]["cy"]."','".$r1."','".$fit[1]["err"]."','".
-				$cdist."','".$pdist."','".$rrat."','".$ints."')";
+				$cdist."','".$pdist."','".$rrat."','".$ints."','".$cdistrel."')";
 				mysqli_query($con,$sql2);
 			} else {
 				$discarded++;
