@@ -67,7 +67,7 @@ else {
 	if ($rowb = mysqli_fetch_array(mysqli_query($con,$sql))) {
 		// $rowb holds the answers
 		while($rowq = mysqli_fetch_array($questions)) {
-			echo "<tr><td>".$rowq['TEXT']."</td><td>".$rowb["Q".$i]."</td></tr>"; 
+			echo "<tr><td>".$rowq['ID']."</td><td>".$rowq['TEXT']."</td><td>".$rowb["Q".$i]."</td></tr>"; 
 			$i++;
 		}
 	}

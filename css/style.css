@@ -111,6 +111,19 @@ canvas {
 	transition: 10s;
 }
 
+.filterbox {
+	width: 300px;
+	display: inline-block;
+	border: 1px solid black;
+	margin: 3px;
+	padding: 3px;
+}
+
+.filterbox img {
+	width: 100%;
+	border-bottom: 1px solid gray;
+}
+
 
 /**** FORM ELEMENTS ****/
 

@@ -35,16 +35,13 @@ else {
 		$self = $row['SEL1'];
 		if ($stage > 5) {
 			// This is a circle-test
-			// Calculate happiness of the user
-			$sqlh = "SELECT * FROM tests WHERE USERID = ".$userID;
-			$happy = 0;
-			if ($rowh = mysqli_fetch_array(mysqli_query($con,$sqlh))) {
-				for($k = 1; $k <= 9; $k++) {
-					$label = "Q".$k;
-					$happy += $rowh[$label]*$signs[$label];
-				}
-				//echo "user: ".$userID." happiness: ".$happy."</br>";
-			}
+			// Get happiness of user
+			$sqlh = "SELECT * FROM users WHERE ID = ".$userID;
+			$rowh = mysqli_fetch_array(mysqli_query($con,$sqlh));
+			$happy = $rowh["HAPPY"];
+			$swls = $rowh["SWLS"];
+			$shs = $rowh["SHS"];
+			$invalid = $rowh["INVALID"];
 			// Fit circles, first fit will be the self-circle
 			$fit = multiFitCircle($d,$self);
 			//echo $drawingID."</br>";
@@ -72,8 +69,8 @@ else {
 				elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr+$tol)) { $ints = 2; }
 				elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr-$tol)) { $ints = 3; }
 				elseif (($pdist < -$tol) && ($cdist < $maxr-$minr-$tol)) { $ints = 4; }
-				$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, HAPPY, X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS, CDISTREL) ";
-				$sql2.= "VALUES ('".$drawingID."','".$userID."','".$stage."','".$happy."','".
+				$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, SWLS, SHS, HAPPY, INVALID, X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS, CDISTREL) ";
+				$sql2.= "VALUES ('".$drawingID."','".$userID."','".$stage."','".$swls."','".$shs."','".$happy."','".$invalid."','".
 				$fit[0]["cx"]."','".$fit[0]["cy"]."','".$r0."','".$fit[0]["err"]."','".
 				$fit[1]["cx"]."','".$fit[1]["cy"]."','".$r1."','".$fit[1]["err"]."','".
 				$cdist."','".$pdist."','".$rrat."','".$ints."','".$cdistrel."')";
@@ -86,6 +83,11 @@ else {
 			generateSVG($drawingID,$d);
 		}
 		$generated++;
+		if ($generated%100==0) {
+			echo $generated."</br>";
+			flush();
+			ob_flush();
+		}
 	}
 	echo "Generated ".$generated." drawings</br>";
 	echo "Accepted ".$accepted." circle-tests (".(100*$accepted/($accepted+$discarded))."%)</br>";
