@@ -13,11 +13,36 @@
 	<link rel="import" href="elements/paper-submit-button.html">
 	<link rel="import" href="elements/enabler-checkbox.html">
 	<link rel="stylesheet" href="css/style.css" />
+	<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.1.min.js" > </script> 
+	<script type="text/javascript">
+		function PrintElem(elem,title)
+		{
+			Popup($(elem).html(),title);
+		}
+		function Popup(data,title) 
+		{
+			var mywindow = window.open('', 'my div', 'height=400,width=600');
+			mywindow.document.write('<html><head><title>'+title+'</title>');
+			/*optional stylesheet*/ 
+			mywindow.document.write('<link rel="stylesheet" href="css/style.css" type="text/css" />');
+			mywindow.document.write('</head><body>');
+			mywindow.document.write(data);
+			mywindow.document.write('</body></html>');
+
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+
+			mywindow.print();
+			mywindow.close();
+
+			return true;
+		}
+	</script>
 </head>
 <body unresolved>
   <core-header-panel>
     <div class="core-header">Dashboard</div>
-    <div class="content">
+    <div class="content" style="width:90% !important;">
 <?php 
 if(isset($_GET["userid"])) {
 include 'database.inc.php';
@@ -30,33 +55,36 @@ else {
 	mysqli_query($con,$sql) or die(mysqli_error($con));
 	$sql = "SELECT * FROM users WHERE id = ".$_GET["userid"];
 	$row = mysqli_fetch_array(mysqli_query($con,$sql));
-	echo "<h2>Személyes adatok</h2>";
-	echo "<table>";
-	echo "<tr><td>Név</td><td>".$row["NAME"]."</td></tr>";
-	echo "<tr><td>Nem</td><td>".$row["GENDER"]."</td></tr>";
-	echo "<tr><td>Életkor</td><td>".$row["AGE"]."</td></tr>";
-	echo "<tr><td>Végzettség</td><td>".$row["EDUCATION"]."</td></tr>";
-	echo "<tr><td>Kezesség</td><td>".$row["HANDEDNESS"]."</td></tr>";
-	echo "<tr><td>Psycho</td><td>".$row["PSYCHO"]."</td></tr>";
-	echo "<tr><td>Kitöltés ideje</td><td>".$row["TIMESTAMP"]."</td></tr>";
-	echo "</table>";
+	echo "<h2>Teszt összesítő</h2>";
+	echo '<input id="sizeslider" type="range" min="100" max="500" value="228">';
+	echo '<input type="button" value="Mentés" onclick="PrintElem(\'#printarea\',\'Teszt_osszesito_'.$row["ID"].'\')" />';
+	echo '</div><div id="printarea" class="content" style="width:90% !important;"">';
+	echo '<p>';
+	echo '<b>Azonosító</b>: '.$row["ID"].', ';
+	echo '<b>Nem</b>: '.$row["GENDER"].', ';
+	echo '<b>Életkor</b>: '.$row["AGE"].', ';
+	echo '<b>Végzettség</b>: '.$row["EDUCATION"].', ';
+	echo '<b>Psycho</b>: '.$row["PSYCHO"].'</br>';
+	echo '<b>SWLS</b>: '.$row["SWLS"].', ';
+	echo '<b>SHS</b>: '.$row["SHS"].', ';
+	echo '<b>HAPPY</b>: '.$row["HAPPY"].', ';
+	echo '<b>Kitöltve</b>: '.$row["TIMESTAMP"].'.';
+	echo '</p>';
 	$drwnames = ["düh","magány","szomorúság","boldogság érzése","hangulatom az utóbbi időben","magadat majd párodat","magadat és párodat","legjobb barátodat","számodra ideális partnert","akivel konfliktusban állsz","legfontosabb problémádra","ugyanez a probléma egy év múlva","párodat öt év múlva","gyenge énedet és erős énedet","boldogságot","pénzt",  "szexualitást","munkádat",  "egészségedet","szomorúságot","szabadságot","hálát",  "spiritualitást","hangulatodat az utóbbi időben"];
-	echo "<h2>Rajzok</h2>";
 	// Rajzok lekérése
 	$sql = "SELECT * FROM drawings WHERE userid = ".$_GET["userid"];
 	$rajzok = mysqli_num_rows(mysqli_query($con,$sql));
-	echo "<p>Rajzok száma: ".$rajzok."</p>";
 	if ($rajzok > 0) {
 		$result = mysqli_query($con,$sql) or die(mysqli_error($con));
 		while ($row = mysqli_fetch_array($result)) {
 			$drwid = $row["ID"];
 			$drwstage = $row["STAGE"];
-			echo "<div class='tile'>";
-			echo "<p>".$drwnames[$drwstage-1]."</p>";
-			echo "<img src='rajz/".$drwid.".svg' class='thumb'>";
-			echo "</div>";
+			$drwcomment = $row["COMMENT"];
+			if (strlen($drwcomment)==0) {$drwcomment = "nincs"; }
+			echo "<div class='filterbox'><img src='rajz/".$drwid.".svg'><p>".$drwnames[$drwstage-1]."</br>(Megj: ".$drwcomment.")</p></div>";
 		}
 	}
+	echo '</div><div class="content" style="width:90% !important;"">';
 	echo "<h2>Kérdőív</h2>";
 	// Teszteredmény
 	$sql = "SELECT * FROM tests WHERE USERID = ".$_GET["userid"];
@@ -77,6 +105,7 @@ else {
 	echo "<p>Nincs megadva azonosító!</p>";
 }
 ?>
+	<script src="js/size.js"></script>
     </div>
   </core-header-panel>
 </body>
