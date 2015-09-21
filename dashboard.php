@@ -42,7 +42,9 @@ else {
 	$failedcount = 0;
 	$drawingcount = 0;
 	$boldogsagsum = 0;
-	echo "<tr><th>Idő</th><th>ID</th><th>Név</th><th>Életkor</th><th>Psycho</th><th>Rajzok</th><th>SWLS</th><th>SHS</th><th>D%</th><th>Happy</th><th>Részletek</th></tr>";
+	echo "<tr><th>Idő</th><th>ID</th><th>Név</th><th>Nem</th><th>Életkor</th><th>Isk.</th><th>Psycho</th><th>Rajzok</th><th>SWLS</th><th>SHS</th><th>D%</th><th>Happy</th><th>Részletek</th>".
+	/*"<th>Invalidate</th>".*/
+	"</tr>";
 	while ($row = mysqli_fetch_array($result)) {
 		// Rajzok száma
 		$sql2 = "SELECT * FROM drawings WHERE USERID = ".$row[0];
@@ -60,11 +62,12 @@ else {
 				echo '<tr style="background: rgb(220,220,220);">';
 				$failedcount++;
 			}
-			echo "<td>".$row["TIMESTAMP"]."</td><td>".$row["ID"]."</td><td>".$row["NAME"]."</td><td>".$row["AGE"]."</td><td>".$row["PSYCHO"]."</td>";
+			echo "<td>".$row["TIMESTAMP"]."</td><td>".$row["ID"]."</td><td>".$row["NAME"]."</td><td>".$row["GENDER"]."</td><td>".$row["AGE"]."</td><td>".$row["EDUCATION"]."</td><td>".$row["PSYCHO"]."</td>";
 			echo "<td>".$rajzok."</td>";
 			echo "<td>".$row["SWLS"]."</td><td>".$row["SHS"]."</td><td>".$row["DIFFPERCENT"]."</td><td>".$row["HAPPY"]."</td>";
 			//echo "<td>".$row['BROWSERNAME']." ".$row['BROWSERVERSION']."</td>";
 			echo "<td><a target='_blank' href='details.php?userid=".$row[0]."'>Részletek</a></td>";
+			//echo "<td><a target='_blank' href='invalidate.php?key=cupi&userid=".$row[0]."'>Invalid</a></td>";
 			echo "</tr>";
 		}
 	}

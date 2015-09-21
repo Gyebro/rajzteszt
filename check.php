@@ -34,21 +34,24 @@ else {
 		}
 		$swls = $test["Q1"]+$test["Q3"]+$test["Q5"]+$test["Q6"]+$test["Q7"];
 		$shs = $test["Q2"]+$test["Q4"]+(8-$test["Q8"])+$test["Q9"];
-		$happy = $swls + $shs;
-		$diffpercent = abs(100.0*(double)$swls/35.0-100.0*(double)$shs/28.0);
-		$invalid = 0;
+		
+		$swlspc = (int)(100.0*((double)($swls-7)/30.0));
+		$shspc = (int)(100.0*((double)($shs-4)/24.0));
+		$diffpercent = (int)abs($swlspc-$shspc);
+		$happy = (int)((double)($swlspc + $shspc)/2.0);
+		$sqlu = "UPDATE users SET ";
 		if ($rajzvalid && $testvalid) {
-			$invalid = 0;
 			$validcount++;
 		} else {
 			$invalid = 1; // TODO: Indicate the cause if required
+			$sqlu.= "INVALID=".$invalid.",";
 		}
-		$sqlu = "UPDATE users SET INVALID=".$invalid.",".
-		"SWLS=".$swls.",".
-		"SHS=".$shs.",".
+		$sqlu.= "SWLS=".$swlspc.",".
+		"SHS=".$shspc.",".
 		"HAPPY=".$happy.",".
 		"DIFFPERCENT=".$diffpercent.
 		" WHERE ID=".$row[0];
+		echo $sqlu."</br>";
 		mysqli_query($con,$sqlu) or die(mysqli_error($con));
 	}
 	echo "All tests: ".$usercount."</br>";
