@@ -55,9 +55,10 @@ else {
 	mysqli_query($con,$sql) or die(mysqli_error($con));
 	$sql = "SELECT * FROM users WHERE id = ".$_GET["userid"];
 	$row = mysqli_fetch_array(mysqli_query($con,$sql));
+	$uid = $row["ID"];
 	echo "<h2>Teszt összesítő</h2>";
 	echo '<input id="sizeslider" type="range" min="100" max="500" value="228">';
-	echo '<input type="button" value="Mentés" onclick="PrintElem(\'#printarea\',\'Teszt_osszesito_'.$row["ID"].'\')" />';
+	echo '<input type="button" value="Mentés" onclick="PrintElem(\'#printarea\',\''.$row["HAPPY"].'_teszt_osszesito_'.$row["ID"].'\')" />';
 	echo '</div><div id="printarea" class="content" style="width:90% !important;"">';
 	echo '<p>';
 	echo '<b>Azonosító</b>: '.$row["ID"].', ';
@@ -80,10 +81,16 @@ else {
 			$drwid = $row["ID"];
 			$drwstage = $row["STAGE"];
 			$drwcomment = $row["COMMENT"];
-			if (strlen($drwcomment)==0) {$drwcomment = "nincs"; }
+			if (strlen($drwcomment)==0) {$drwcomment = "–"; }
 			echo "<div class='filterbox'><img src='rajz/".$drwid.".svg'><p>".$drwnames[$drwstage-1]."</br>(Megj: ".$drwcomment.")</p></div>";
 		}
 	}
+	echo '</div><div class="content" style="width:90% !important;"">';
+	// Combo rajzok
+	echo "<div class='filterbox'><img src='rajz/combo".$uid."a.svg'></div>";
+	echo "<div class='filterbox'><img src='rajz/combo".$uid."b.svg'></div>";
+	echo "<div class='filterbox'><img src='rajz/combo".$uid."c.svg'></div>";
+	echo "<div class='filterbox'><img src='rajz/combo".$uid."d.svg'></div>";
 	echo '</div><div class="content" style="width:90% !important;"">';
 	echo "<h2>Kérdőív</h2>";
 	// Teszteredmény

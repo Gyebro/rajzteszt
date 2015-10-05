@@ -105,16 +105,14 @@ else {
 		// Lekérés
 		$sql = "SET NAMES 'utf8'";
 		mysqli_query($con,$sql) or die(mysqli_error($con));
-		
-		
 		if($order == $ordernames[0]) {
 			// Ascending (sad people)
 			$sql = "SELECT * FROM ( ".
-			"SELECT * FROM results WHERE STAGE = ".$stage." AND INVALID = 0 ORDER BY ".$index." ".$order." LIMIT ".$limit.
-			") sub ORDER BY ".$index." DESC";
+			"SELECT * FROM results WHERE STAGE = ".$stage." AND INVALID = 0 ORDER BY ".$index." ".$order.", USERID ASC LIMIT ".$limit.
+			") sub ORDER BY ".$index." DESC, USERID ASC";
 		} else {
 			// Descending (happy people)
-			$sql = "SELECT * FROM results WHERE STAGE = ".$stage." AND INVALID = 0 ORDER BY ".$index." ".$order." LIMIT ".$limit;
+			$sql = "SELECT * FROM results WHERE STAGE = ".$stage." AND INVALID = 0 ORDER BY ".$index." ".$order.", USERID ASC LIMIT ".$limit;
 		}
 		$result = mysqli_query($con,$sql) or die(mysqli_error($con));
 		while ($row = mysqli_fetch_array($result)) {
@@ -129,7 +127,12 @@ else {
 			if ($gender == "male") { $gender = "ffi"; }
 			if ($gender == "female") { $gender = "nő"; }
 			$age = $userrow["AGE"];
-			echo "<div class='filterbox'><img src='rajz/".$did.".svg'><p>SWLS=".$swls.", SHS=".$shs.", HAPPY=".$happy.",</br>U = ".$user." (".$gender.", ".$age.")</p></div>";
+			// Debug coloring
+			//$val = (int)(120.0+135.0*(double)$user/350.0);
+			//$val2 = 255-$val;
+			//$bgstyle = "background: rgb(0,".$val.",".$val2.")";
+			$bgstyle = " ";
+			echo "<div class='filterbox' style='".$bgstyle."'><img src='rajz/".$did.".svg'><p>SWLS=".$swls.", SHS=".$shs.", HAPPY=".$happy.",</br>U = ".$user." (".$gender.", ".$age.")</p></div>";
 			//echo "SWLS = ".$row["SWLS"].", SHS = ".$row["SHS"].", HAPPY = ".$row["HAPPY"].", ID = ".$row["DRAWINGID"]."</br>";
 		}
 	} else {

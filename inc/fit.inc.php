@@ -111,15 +111,20 @@ function getDataPoints($d,$i) {
 /* Fits two circles on paths in json data
  *
  */
-function multiFitCircle($d,$self) {
+function multiFitCircle($d,$self,$annotated) {
 	$result = array();
 	// Get self-circle path points
 	$ppts = getDataPoints($d,$self);
 	$fit = fitCircle($ppts["x"],$ppts["y"]);
 	array_push($result,$fit);
+	if($annotated != -1) {
+		$ppts = getDataPoints($d,$annotated);
+		$fit = fitCircle($ppts["x"],$ppts["y"]);
+		array_push($result,$fit);
+	}
 	// Get other circle paths and fits
 	for($i=0;$i<count($d["paths"]);$i++) {
-		if ($i != $self) {
+		if (($i != $self) && ($i != $annotated)) {
 			$ppts = getDataPoints($d,$i);
 			$fit = fitCircle($ppts["x"],$ppts["y"]);
 			array_push($result,$fit);
@@ -127,5 +132,67 @@ function multiFitCircle($d,$self) {
 	}
 	return $result;
 }
+
+/* Auxiliary functions for calculateOverlap 
+ */
+function trans($p, $c) {
+	$x = floatval($p["x"])-floatval($c["x"]);
+	$y = floatval($p["y"])-floatval($c["y"]);
+	return array("x" => $x, "y" => $y);
+}
+function rot($p, $c1, $c2) {
+	$alpha = atan2($c2["y"]-$c1["y"], $c2["x"]-$c1["x"]);
+	$ca = cos($alpha);
+	$sa = sin($alpha);
+	$x =  $ca*$p["x"]+$sa*$p["y"];
+	$y = -$sa*$p["x"]+$ca*$p["y"];
+	return array("x" => $x, "y" => $y);
+}
+function xi($c2x, $r1, $r2) {
+	return ($c2x*$c2x+$r1*$r1-$r2*$r2)/(2.0*$c2x);
+}
+function yi($c2x, $r1, $r2) {
+	return sqrt(($c2x + $r1 - $r2)*($c2x - $r1 + $r2)*(-$c2x + $r1 + $r2)*($c2x + $r1 + $r2))/(2.0*$c2x);
+}
+function Ai($R, $d) {
+	return ($R*$R*acos($d/$R) - $d*sqrt($R*$R-$d*$d));
+}
+
+/* Calculates the overlap area between two circles
+ */
+function calculateOverlap($c1x, $c1y, $r1, $c2x, $c2y, $r2) {
+	$c1 = array("x" => $c1x, "y" => $c1y);
+	$c2 = array("x" => $c2x, "y" => $c2y);
+	$t1 = trans($c1, $c1);
+	$t2 = trans($c2, $c1);
+	$z1 = rot($t1, $c1, $c2);
+	$z2 = rot($t2, $c1, $c2);
+	$ksi = xi($z2["x"], $r1, $r2);
+	$eta = yi($z2["x"], $r1, $r2);
+	$d1 = $ksi;
+	$d2 = $z2["x"]-$ksi;
+	$A1 = 0; $A2 = 0;
+	if ($z2["x"] > $r1+$r2) {
+		/* No overlap */
+		//echo "No overlap</br>";
+		$A1 = 0; $A2 = 0;
+	} elseif ($z2["x"] + $r1 < $r2) {
+		/* Circle 1 is inside circle 2 */
+		//echo "C1 in C2</br>";
+		$A1 = $r1*$r1*pi();
+		$A2 = 0;
+	} elseif ($z2["x"] + $r2 < $r1) {
+		/* Circle 2 is inside circle 1 */
+		//echo "C2 in C1</br>";
+		$A1 = 0;
+		$A2 = $r2*$r2*pi();
+	} else {
+		//echo "Crossing</br>";
+		$A1 = Ai($r1,$d1);
+		$A2 = Ai($r2,$d2);
+	}
+	return ($A1+$A2);
+}
+
 
 ?> 

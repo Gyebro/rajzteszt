@@ -12,6 +12,9 @@
 	},{
 		type: "line",
 		dataPoints: regression
-	}]
+	}/*,{
+		type: "column",
+		dataPoints: average
+	}*/]
 });
 chart.render();

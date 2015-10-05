@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 	<title>Generate-image</title>
@@ -11,7 +11,7 @@ include 'database.inc.php';
 include 'inc/fit.inc.php';
 include 'inc/svg.inc.php';
 $con = mysqli_connect($host, $dbuser, $dbpass, $db);
-if (!$con) { die("Sikertelen csatlakoz�s: " . mysqli_error($con)); }
+if (!$con) { die("Sikertelen csatlakozás: " . mysqli_error($con)); }
 else {
 	$sql = "SET NAMES 'utf8'";
 	mysqli_query($con,$sql) or die(mysqli_error($con));
@@ -40,6 +40,8 @@ else {
 			$stage = $row['STAGE'];
 			$userID = $row['USERID'];
 			$self = $row['SEL1'];
+			$annotated = $row['SEL2'];
+			$label = "Erős én";
 			// Get happiness of user
 			$sqlh = "SELECT * FROM users WHERE ID = ".$userID;
 			$rowh = mysqli_fetch_array(mysqli_query($con,$sqlh));
@@ -50,7 +52,7 @@ else {
 			if ($stage > 5) {
 				// This is a circle-test
 				// Fit circles, first fit will be the self-circle
-				$fit = multiFitCircle($d,$self);
+				$fit = multiFitCircle($d,$self,$annotated);
 				//echo $drawingID."</br>";
 				// Only save if fitting returned 2 circles!
 				if (sizeof($fit)==2) {
@@ -69,6 +71,12 @@ else {
 					$ints = 0;
 					$maxr = max($r0,$r1);
 					$minr = min($r0,$r1);
+					// Calculate overlaps
+					$overa = calculateOverlap($fit[0]["cx"],$fit[0]["cy"],$fit[0]["r"],
+												$fit[1]["cx"],$fit[1]["cy"],$fit[1]["r"]);
+					$selfcarea = $r0*$r0*pi();
+					$overr = $overa / $selfcarea;
+					$over2 = $overr/$rrat;
 					// Distance tolerance
 					$tol = 5;
 					if ($pdist >= $tol) { $ints = 0; }
@@ -76,16 +84,21 @@ else {
 					elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr+$tol)) { $ints = 2; }
 					elseif (($pdist < -$tol) && ($cdist >= $maxr-$minr-$tol)) { $ints = 3; }
 					elseif (($pdist < -$tol) && ($cdist < $maxr-$minr-$tol)) { $ints = 4; }
-					$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, SWLS, SHS, HAPPY, INVALID, X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS, CDISTREL) ";
+					$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, SWLS, SHS, HAPPY, INVALID, ".
+					"X0, Y0, R0, ERR0, X1, Y1, R1, ERR1, CDIST, PDIST, RRAT, INTS, CDISTREL, OVERA, OVERR, OVER2) ";
 					$sql2.= "VALUES ('".$drawingID."','".$userID."','".$stage."','".$swls."','".$shs."','".$happy."','".$invalid."','".
 					$fit[0]["cx"]."','".$fit[0]["cy"]."','".$r0."','".$fit[0]["err"]."','".
 					$fit[1]["cx"]."','".$fit[1]["cy"]."','".$r1."','".$fit[1]["err"]."','".
-					$cdist."','".$pdist."','".$rrat."','".$ints."','".$cdistrel."')";
+					$cdist."','".$pdist."','".$rrat."','".$ints."','".$cdistrel."','".$overa."','".$overr."','".$over2."')";
 					mysqli_query($con,$sql2);
 				} else {
+					// Also save to result record
 					$discarded++;
+					$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, SWLS, SHS, HAPPY, INVALID) ";
+					$sql2.= "VALUES ('".$drawingID."','".$userID."','".$stage."','".$swls."','".$shs."','".$happy."','".$invalid."')";
+					mysqli_query($con,$sql2);
 				}
-				generateSVGc($drawingID,$d,$fit);
+				generateSVGc($drawingID,$d,$fit,$annotated,$label);
 			} else {
 				// This is a sketch-test
 				$sql2 = "REPLACE INTO results (DRAWINGID, USERID, STAGE, SWLS, SHS, HAPPY, INVALID) ";
