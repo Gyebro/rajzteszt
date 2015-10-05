@@ -47,7 +47,7 @@ else {
 		// Lekérés
 		$sql = "SET NAMES 'utf8'";
 		mysqli_query($con,$sql) or die(mysqli_error($con));
-		$sql = "SELECT * FROM results WHERE STAGE = ".$stage;
+		$sql = "SELECT * FROM results WHERE INVALID = 0 AND STAGE = ".$stage;
 		$result = mysqli_query($con,$sql) or die(mysqli_error($con));
 		echo "\n";
 		echo "<script>";
